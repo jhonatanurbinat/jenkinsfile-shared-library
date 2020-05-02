@@ -1,9 +1,12 @@
 def call(env){
     pipeline {
+        agent any
         stages {
             stage('First Test') {
                 steps {
-                    println "hello world"
+                    script {
+                        println "hello world"
+                    }
                 }
             }
         }
