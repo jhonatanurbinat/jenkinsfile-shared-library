@@ -12,3 +12,8 @@ spec:
     command:
     - cat
     tty: true
+  - name: jnlp
+    image: jenkinsci/jnlp-slave:3.29-1
+    imagePullPolicy: Always
+    command:
+    - /usr/local/bin/jenkins-slave
