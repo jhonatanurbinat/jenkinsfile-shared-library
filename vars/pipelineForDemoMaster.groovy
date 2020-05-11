@@ -3,7 +3,7 @@ def call(env){
         agent {
             kubernetes {
                 defaultContainer 'kube-tools'
-                label 'kube-tool'
+                label 'jnlp'
                 yaml libraryResource('podTemplates/kubeToolsTemplate.yaml')
             }
         }
