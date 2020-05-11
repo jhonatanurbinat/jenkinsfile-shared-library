@@ -2,8 +2,7 @@ def call(env){
     pipeline {
         agent {
             kubernetes {
-                defaultContainer 'kube-tools'
-                label 'jnlp'
+                defaultContainer 'jnlp'
                 yaml libraryResource('podTemplates/kubeToolsTemplate.yaml')
             }
         }
