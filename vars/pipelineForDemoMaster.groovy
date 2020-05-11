@@ -1,11 +1,32 @@
 def call(env){
     pipeline {
-        agent { label 'kube-tools' }
+        agent { 
+            kubernetes {
+                yaml """
+                apiVersion: v1
+                kind: Pod
+                metadata:
+                  labels:
+                    agent: kubeTools 
+                  name: kube-tools
+                spec:
+                  containers:
+                  - name: kube-tools
+                    imagePullPolicy: always
+                    image: bitnami/kubectl
+                    command:
+                    - cat
+                    tty: true
+                """
+            }
+        }
         stages {
             stage('First Test') {
                 steps {
-                    script {
-                        println "hello world"
+                    container('kube-tools') {
+                        script {
+                            println "hello world"
+                        }
                     }
                 }
             }
