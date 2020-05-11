@@ -2,7 +2,7 @@ def call(env){
     pipeline {
         agent {
             kubernetes {
-                defaultContainer 'kubeTools'
+                defaultContainer 'kube-tools'
                 yaml libraryResource('podTemplates/kubeToolsTemplate.yaml')
             }
         }
