@@ -3,6 +3,7 @@ kind: Pod
 metadata:
   labels:
     agent: kubeTools 
+  name: kube-tools
 spec:
   containers:
   - name: kube-tools
