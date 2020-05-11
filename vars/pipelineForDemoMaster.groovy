@@ -1,6 +1,11 @@
 def call(env){
     pipeline {
-        agent any
+        agent {
+            kubernetes {
+                defaultContainer 'kubeTools'
+                podTemplate libraryResource('podTemplates/kubeToolsTemplate.yaml')
+            }
+        }
         stages {
             stage('First Test') {
                 steps {
