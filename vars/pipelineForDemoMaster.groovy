@@ -3,7 +3,7 @@ def call(env){
         agent {
             kubernetes {
                 defaultContainer 'kubeTools'
-                podTemplate libraryResource('podTemplates/kubeToolsTemplate.yaml')
+                yaml libraryResource('podTemplates/kubeToolsTemplate.yaml')
             }
         }
         stages {
