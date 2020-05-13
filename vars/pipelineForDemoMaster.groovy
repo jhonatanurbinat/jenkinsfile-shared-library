@@ -46,7 +46,12 @@ def call(env){
                     script {
                         input message: 'Do you want switch apps?', ok: 'Switch!'
                         def patch = readYaml file: 'manifests/service-patch.yaml'
-                        def actualVersion = readYaml text: sh(script: "kubectl get deployment -l version!=${env.VERSION} -o yaml", returnStdout: true)
+                        def actualVersion
+                        
+                        withCredentials([file(credentialsId: 'kubeconfig', variable: 'kubeconfig')]) {
+                            actualVersion = readYaml text: sh(script: "kubectl --kubeconfig get deployment -l version!=${env.VERSION} -o yaml", returnStdout: true)
+                        }
+                        
                         actualVersion = actualVersion.items[0].labels.version
 
                         println actualVersion
