@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 def call(env){
     pipeline {
         agent none
@@ -58,6 +60,8 @@ def call(env){
                         deployVersion = deployVersion.items[0].metadata.labels.version
 
                         patch.spec.selector.version = deployVersion
+
+                        patch = new JsonSlurper().parseText(patch)
 
                         withCredentials([file(credentialsId: 'kubeconfig', variable: 'kubeconfig')]) {
                             sh(script: "kubectl --kubeconfig ${kubeconfig} patch service ${env.SVC_NAME} --patch ${patch}")
