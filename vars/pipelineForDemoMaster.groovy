@@ -57,7 +57,8 @@ def call(env){
                         
                         deployVersion = deployVersion.items[0].metadata.labels.version
 
-                        println deployVersion
+                        patch.spec.selector.version = deployVersion
+                        println patch
                     }
                 }
             }
