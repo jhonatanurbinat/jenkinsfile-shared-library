@@ -61,10 +61,10 @@ def call(env){
 
                         patch.spec.selector.version = deployVersion
 
-                        patch = new JsonSlurper().toJson(patch)
+                        writeYaml file: 'patch.yaml' data: patch
 
                         withCredentials([file(credentialsId: 'kubeconfig', variable: 'kubeconfig')]) {
-                            sh(script: "kubectl --kubeconfig ${kubeconfig} patch service ${env.SVC_NAME} --patch ${patch}")
+                            sh(script: "kubectl --kubeconfig ${kubeconfig} patch service ${env.SVC_NAME} --patch $(cat patch.yaml)")
                         }
                     }
                 }
