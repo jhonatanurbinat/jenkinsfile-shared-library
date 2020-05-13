@@ -61,7 +61,7 @@ def call(env){
 
                         patch.spec.selector.version = deployVersion
 
-                        writeYaml file: 'patch.yaml' data: patch
+                        writeYaml file: 'patch.yaml', data: patch
 
                         withCredentials([file(credentialsId: 'kubeconfig', variable: 'kubeconfig')]) {
                             sh(script: "kubectl --kubeconfig ${kubeconfig} patch service ${env.SVC_NAME} --patch $(cat patch.yaml)")
