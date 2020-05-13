@@ -3,7 +3,7 @@ def call(env){
         agent none
         stages {
             stage('Build') {
-                agent 'Docker'
+                agent { label 'Docker' }
                 steps {
                     script {
                         sh "docker build ${env.DOCKERFILE_LOCATION} -t ${env.DOCKER_IMAGE}:${env.VERSION}"
@@ -11,7 +11,7 @@ def call(env){
                 }
             }
             stage('Deliver') {
-                agent 'Docker'
+                agent { label 'Docker' }
                 steps {
                     script {
                         sh "docker push ${env.DOCKER_IMAGE}:${env.VERSION}"
