@@ -52,7 +52,7 @@ def call(env){
                             actualVersion = readYaml text: sh(script: "kubectl --kubeconfig ${kubeconfig} get deployment -l version!=${env.VERSION} -o yaml", returnStdout: true)
                         }
                         
-                        actualVersion = actualVersion.items[0].labels.version
+                        actualVersion = actualVersion.items[0].metadata.labels.version
 
                         println actualVersion
                     }
