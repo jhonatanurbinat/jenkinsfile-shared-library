@@ -12,7 +12,7 @@ def call(env){
                 steps {
                     script {
                         withCredentials([file(credentialsId: 'kubeconfig', variable: 'kubeconfig')]) {
-                            sh "kubectl --kubeconfig ${kubeconfig} version"
+                            sh "kubectl --kubeconfig ${kubeconfig} get pods"
                         }
                     }
                 }
