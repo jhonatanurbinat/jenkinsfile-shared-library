@@ -11,7 +11,9 @@ def call(env){
             stage('First Test') {
                 steps {
                     script {
-                            sh "kubectl version"
+                        withCredentials([file(credentialsId: 'kubeconfig', variable: 'kubeconfig')]) {
+                            sh "kubectl --kubeconfig ${kubeconfig} version"
+                        }
                     }
                 }
             }
