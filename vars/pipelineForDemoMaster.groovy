@@ -45,7 +45,9 @@ def call(env){
                 steps {
                     script {
                         input message: 'Do you want switch apps?', ok: 'Switch!'
-                        println "Here Blue/Green"
+                        def patch = readYaml file: 'manifests/service-patch.yaml'
+
+                        println patch
                     }
                 }
             }
