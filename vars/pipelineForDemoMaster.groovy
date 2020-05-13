@@ -49,7 +49,7 @@ def call(env){
                         def actualVersion
                         
                         withCredentials([file(credentialsId: 'kubeconfig', variable: 'kubeconfig')]) {
-                            actualVersion = readYaml text: sh(script: "kubectl --kubeconfig get deployment -l version!=${env.VERSION} -o yaml", returnStdout: true)
+                            actualVersion = readYaml text: sh(script: "kubectl --kubeconfig ${kubeconfig} get deployment -l version!=${env.VERSION} -o yaml", returnStdout: true)
                         }
                         
                         actualVersion = actualVersion.items[0].labels.version
