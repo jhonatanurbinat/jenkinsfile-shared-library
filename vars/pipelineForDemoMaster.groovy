@@ -1,14 +1,9 @@
 def call(env){
     pipeline {
-        agent { 
-            docker { 
-                label 'Docker'
-                image 'bitnami/kubectl' 
-                args '--entrypoint=""'
-            }
-        }
+        agent none
         stages {
             stage('Build') {
+                agent 'Docker'
                 steps {
                     script {
                         sh "docker build ${env.DOCKERFILE_LOCATION} -t ${env.DOCKER_IMAGE}:${env.VERSION}"
@@ -16,6 +11,7 @@ def call(env){
                 }
             }
             stage('Deliver') {
+                agent 'Docker'
                 steps {
                     script {
                         sh "docker push ${env.DOCKER_IMAGE}:${env.VERSION}"
@@ -23,6 +19,13 @@ def call(env){
                 }
             }
             stage('Deploy') {
+                agent { 
+                    docker { 
+                        label 'Docker'
+                        image 'bitnami/kubectl' 
+                        args '--entrypoint=""'
+                    }
+                }
                 steps {
                     script {
                         withCredentials([file(credentialsId: 'kubeconfig', variable: 'kubeconfig')]) {
@@ -32,6 +35,13 @@ def call(env){
                 }
             }
             stage('Do Blue/Green') {
+                agent { 
+                    docker { 
+                        label 'Docker'
+                        image 'bitnami/kubectl' 
+                        args '--entrypoint=""'
+                    }
+                }
                 steps {
                     script {
                         input message: 'Do you want switch apps?', ok: 'Switch!'
