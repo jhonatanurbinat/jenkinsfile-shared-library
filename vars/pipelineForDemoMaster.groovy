@@ -51,6 +51,8 @@ def call(env){
                         def deployVersion
                         def actualVersion
                         
+                        sh 'rm patch.yaml'
+
                         withCredentials([file(credentialsId: 'kubeconfig', variable: 'kubeconfig')]) {
                             actualVersion = readYaml text: sh(script: "kubectl --kubeconfig ${kubeconfig} get svc ${env.SVC_NAME} -o yaml", returnStdout: true)
                             actualVersion = actualVersion.spec.selector.version
