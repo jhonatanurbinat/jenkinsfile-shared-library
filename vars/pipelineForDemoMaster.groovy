@@ -4,6 +4,7 @@ def call(env){
             docker { 
                 label 'Docker'
                 image 'bitnami/kubectl' 
+                args '--entrypoint=/bin/bash'
             }
         }
         stages {
