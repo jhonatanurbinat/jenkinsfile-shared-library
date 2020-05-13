@@ -1,6 +1,7 @@
 def call(env){
     pipeline {
         agent { 
+            label 'Docker'
             docker { image 'bitnami/kubectl' }
         }
         stages {
