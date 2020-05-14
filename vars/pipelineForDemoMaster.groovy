@@ -57,6 +57,8 @@ def call(env){
                         newDeployment.spec.template.metadata.labels.version = "${env.VERSION}"
                         newDeployment.spec.template.spec.containers[0].image = "${env.DOCKER_IMAGE}:${env.VERSION}"
 
+
+                        sh "rm deployment.yaml"
                         writeYaml file: "deployment.yaml", data: newDeployment
 
                         withCredentials([file(credentialsId: 'kubeconfig', variable: 'kubeconfig')]) {
@@ -92,6 +94,7 @@ def call(env){
 
                         patch.spec.selector.version = deployVersion
 
+                        sh "rm patch.yaml"
                         writeYaml file: 'patch.yaml', data: patch
 
                         withCredentials([file(credentialsId: 'kubeconfig', variable: 'kubeconfig')]) {
@@ -99,11 +102,6 @@ def call(env){
                         }
                     }
                 }
-            }
-        }
-        post { 
-            always { 
-                sh(script: "rm -rf * && rm -rf .*")
             }
         }
     }
