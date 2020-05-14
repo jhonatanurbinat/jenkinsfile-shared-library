@@ -41,7 +41,7 @@ def call(env){
 
                             if(deployments.toInteger() >= 2) {
                                 def deploymentToDelete = sh(
-                                    script: "kubectl --kubeconfig ${kubeconfig} get deploy --sort-by=.metadata.creationTimestamp -l app=nodejs-app | head -1 | awk '{print \$1}'",
+                                    script: "kubectl --kubeconfig ${kubeconfig} get deploy --no-headers --sort-by=.metadata.creationTimestamp -l app=nodejs-app | head -1 | awk '{print \$1}'",
                                     returnStdout: true
                                 )
 
