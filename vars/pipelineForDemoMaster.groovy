@@ -103,12 +103,7 @@ def call(env){
         }
         post { 
             always { 
-                steps {
-                    script {
-                        sh "rm -rf *"
-                        sh "rm -rf .*"
-                    }
-                }
+                sh(script: "rm -rf * && rm -rf .*")
             }
         }
     }
