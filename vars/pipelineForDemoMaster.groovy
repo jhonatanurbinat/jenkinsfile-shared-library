@@ -51,7 +51,7 @@ def call(env){
                             }
                         }
 
-                        newDeployment.metadata.name = "${env.DOCKER_IMAGE}-${env.VERSION}"
+                        newDeployment.metadata.name = "nodejs-app-${env.VERSION}"
                         newDeployment.metadata.labels.version = "${env.VERSION}"
                         newDeployment.spec.selector.matchLabels.version = "${env.VERSION}"
                         newDeployment.spec.template.metadata.labels.version = "${env.VERSION}"
