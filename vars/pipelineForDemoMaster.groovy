@@ -57,7 +57,7 @@ def call(env){
                         newDeployment.spec.template.metadata.labels.version = "${env.VERSION}"
                         newDeployment.spec.template.spec.containers[0].image = "${env.DOCKER_IMAGE}:${env.VERSION}"
 
-                        writeYaml file: "deployment.yaml" data: newDeployment
+                        writeYaml file: "deployment.yaml", data: newDeployment
 
                         withCredentials([file(credentialsId: 'kubeconfig', variable: 'kubeconfig')]) {
                             sh "kubectl --kubeconfig ${kubeconfig} apply -f deployment.yaml"
