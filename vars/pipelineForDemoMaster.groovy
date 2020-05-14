@@ -30,8 +30,37 @@ def call(env){
                 }
                 steps {
                     script {
+                        def newDeployment = readYaml file: 'manifests/deployment.yaml'
+                        def oldDeployment
+
                         withCredentials([file(credentialsId: 'kubeconfig', variable: 'kubeconfig')]) {
-                            sh "kubectl --kubeconfig ${kubeconfig} apply -f manifests/deployment-${env.VERSION}.yaml"
+                            def deployments = sh( 
+                                script: "kubectl --kubeconfig ${kubeconfig} get deployments --no-headers -l app=nodejs-app | wc -l",
+                                returnStdout: true
+                            )
+
+                            if(deployments.toInteger() >= 2) {
+                                def deploymentToDelete = sh(
+                                    script: "kubectl --kubeconfig ${kubeconfig} --sort-by=.metadata.creationTimestamp -l app=nodejs-app | tail -1 | awk '{print \$1}'",
+                                    returnStdout: true
+                                )
+
+                                sh(
+                                    script: "kubectl --kubeconfig ${kubeconfig} delete deploy ${deploymentToDelete}"
+                                )
+                            }
+                        }
+
+                        newDeployment.metadata.name = "${env.DOCKER_IMAGE}-${env.VERSION}"
+                        newDeployment.metadata.labels.version = "${env.VERSION}"
+                        newDeployment.spec.selector.matchLabels.version = "${env.VERSION}"
+                        newDeployment.spec.template.metadata.labels.version = "${env.VERSION}"
+                        newDeployment.spec.template.spec.containers[0].image = "${env.DOCKER_IMAGE}:${env.VERSION}"
+
+                        writeYaml file: "deployment.yaml" data: newDeployment
+
+                        withCredentials([file(credentialsId: 'kubeconfig', variable: 'kubeconfig')]) {
+                            sh "kubectl --kubeconfig ${kubeconfig} apply -f deployment.yaml"
                         }
                     }
                 }
@@ -51,12 +80,12 @@ def call(env){
                         def deployVersion
                         def actualVersion
                         
-                        sh 'rm patch.yaml'
 
                         withCredentials([file(credentialsId: 'kubeconfig', variable: 'kubeconfig')]) {
                             actualVersion = readYaml text: sh(script: "kubectl --kubeconfig ${kubeconfig} get svc ${env.SVC_NAME} -o yaml", returnStdout: true)
                             actualVersion = actualVersion.spec.selector.version
-                            deployVersion = readYaml text: sh(script: "kubectl --kubeconfig ${kubeconfig} get deployment -l version!=${actualVersion} -o yaml", returnStdout: true)
+                            deployVersion = readYaml text: sh(script: "kubectl --kubeconfig ${kubeconfig} get deployment -l version!=${actualVersion} -o yaml", 
+                                                                returnStdout: true)
                         }
                         
                         deployVersion = deployVersion.items[0].metadata.labels.version
@@ -70,6 +99,11 @@ def call(env){
                         }
                     }
                 }
+            }
+        }
+        post { 
+            always { 
+                cleanWs()
             }
         }
     }
