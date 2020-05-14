@@ -103,7 +103,12 @@ def call(env){
         }
         post { 
             always { 
-                cleanWs()
+                steps {
+                    script {
+                        sh "rm -rf *"
+                        sh "rm -rf .*"
+                    }
+                }
             }
         }
     }
