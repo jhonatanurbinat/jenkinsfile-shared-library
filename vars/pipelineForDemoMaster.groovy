@@ -48,6 +48,19 @@ def call(env){
                                 sh(
                                     script: "kubectl --kubeconfig ${kubeconfig} delete deploy ${deploymentToDelete}"
                                 )
+
+
+                                newDeployment.metadata.name = "nodejs-app-${env.VERSION}"
+                                newDeployment.metadata.labels.version = "${env.VERSION}"
+                                newDeployment.spec.selector.matchLabels.version = "${env.VERSION}"
+                                newDeployment.spec.template.metadata.labels.version = "${env.VERSION}"
+                                newDeployment.spec.template.spec.containers[0].image = "${env.DOCKER_IMAGE}:${env.VERSION}"
+
+                                sh "rm deployment.yaml"
+                                writeYaml file: "deployment.yaml", data: newDeployment
+
+                                sh "kubectl --kubeconfig ${kubeconfig} apply -f deployment.yaml"
+
                             }else if(deployments.toInteger() == 0) {
                                 sh(
                                     script: "kubectl --kubeconfig ${kubeconfig} create -f manifests/deployment.yaml"
@@ -56,20 +69,6 @@ def call(env){
                                     script: "kubectl --kubeconfig ${kubeconfig} create -f manifests/service.yaml"
                                 )
                             }
-                        }
-
-                        newDeployment.metadata.name = "nodejs-app-${env.VERSION}"
-                        newDeployment.metadata.labels.version = "${env.VERSION}"
-                        newDeployment.spec.selector.matchLabels.version = "${env.VERSION}"
-                        newDeployment.spec.template.metadata.labels.version = "${env.VERSION}"
-                        newDeployment.spec.template.spec.containers[0].image = "${env.DOCKER_IMAGE}:${env.VERSION}"
-
-
-                        sh "rm deployment.yaml"
-                        writeYaml file: "deployment.yaml", data: newDeployment
-
-                        withCredentials([file(credentialsId: 'kubeconfig', variable: 'kubeconfig')]) {
-                            sh "kubectl --kubeconfig ${kubeconfig} apply -f deployment.yaml"
                         }
                     }
                 }
