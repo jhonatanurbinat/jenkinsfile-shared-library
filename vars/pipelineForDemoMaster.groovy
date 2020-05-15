@@ -48,6 +48,13 @@ def call(env){
                                 sh(
                                     script: "kubectl --kubeconfig ${kubeconfig} delete deploy ${deploymentToDelete}"
                                 )
+                            }else if(deployments.toInteger() == 0) {
+                                sh(
+                                    script: "kubectl --kubeconfig ${kubeconfig} create -f manifests/deployment.yaml"
+                                )
+                                sh(
+                                    script: "kubectl --kubeconfig ${kubeconfig} create -f manifests/service.yaml"
+                                )
                             }
                         }
 
